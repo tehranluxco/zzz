@@ -1,0 +1,428 @@
+@font-face {
+    font-family: 'Yekan';
+    src: url('../fonts/Yekan.eot?#') format('eot'),url('../fonts/Yekan.woff') format('woff'),url('../fonts/Yekan.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Iran';
+    src: url('../fonts/Iran.eot?#') format('eot'),url('../fonts/Iran.woff') format('woff'),url('../fonts/Iran.ttf') format('truetype');
+}
+html , body , .ui-mobile, .ui-mobile body {
+    height:100% !important;
+}
+h1 , h2 , h3 , h4 , h5 , h6 {
+    font-family:'Iran';
+    font-weight:bold;
+}
+a, p, span, label {
+    font:normal 0.8em 'Yekan' !important;
+}
+
+.ui-btn {
+    font: normal 0.8em 'Yekan' !important;
+}
+.page * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+.swiper-pagination-bullet-active {
+    opacity: 1;
+    background: #ffcb05;
+}
+
+.swiper-container-horizontal>.swiper-pagination {
+   background: rgba(0, 0, 0, 0.21);
+}
+
+
+/* Arrow only buttons in the header. */
+.page .ui-header .ui-btn {
+    background: none;
+    border: none;
+    top: 9px;
+}
+.page .ui-header .ui-btn-inner {
+    border: none;
+}
+/* Content styling. */
+dl { font-family: "Times New Roman", Times, serif; padding: 1em; }
+dt { font-size: 2em; font-weight: bold; }
+dt span { font-size: .5em; color: #777; margin-left: .5em; }
+dd { font-size: 1.25em;	margin: 1em 0 0; padding-bottom: 1em; border-bottom: 1px solid #eee; }
+.back-btn { float: right; margin: 0 2em 1em 0; }
+
+/*****
+panel
+******/
+::-webkit-input-placeholder {
+   font:normal 12px 'Yekan';
+}
+
+:-moz-placeholder { /* Firefox 18- */
+   font:normal 12px 'Yekan';
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+   font:normal 12px 'Yekan'; 
+}
+
+:-ms-input-placeholder {  
+   font:normal 12px 'Yekan';
+}
+.search .ui-input-text {
+    max-width:70%;
+    display:inline-block;
+    margin-left:10px;
+}
+ul.menu {
+    margin: 20px auto !important;
+    font-family: 'Yekan';
+}
+
+ul.menu li a {
+    font: bold 0.9em 'Yekan';
+}
+/********
+header
+******/
+div.header {
+    height: 45px;
+}
+/*******
+content
+***********/
+.content {
+    /* background: url(../img/colorful-back.jpg) no-repeat right center!important; */
+    min-height: 100vh;
+    background-size:cover;
+    position: relative;
+    top: 0px;
+    bottom: 40px;
+    padding: 14px 14px !important;
+}
+
+div.footer {
+    position: relative;
+    top: 100%;
+    
+    width: 100%;
+}
+#home img {
+    display:block;
+    width: 75%;
+    margin:20px auto;
+    
+    box-shadow: 1px 1px 8px #000;
+    padding: 8px 8px;
+}
+/***************
+    splash
+*************/
+#splash {
+    width:100vw;
+    height:100vh;
+    background:url(../img/bg-2.jpg) no-repeat;
+    background-size:100% 100%;
+    /* padding:50% 0px; */
+    overflow:hidden;
+}
+#splash img {
+    display:block;
+    margin:0px auto;
+    position:relative;
+    width:135px;
+    top: 37vh;
+}
+/***************
+   Buildings $ news
+**************/
+.item {
+    position:relative;
+    
+    margin-bottom: 20px;
+}
+.item .img {
+    box-shadow: inset 0px -40px 130px #000;
+    -webkit-box-shadow: inset 0px -40px 130px #000;
+    -moz-box-shadow: inset 0px -40px 130px #000;
+    -o-box-shadow: inset 0px -40px 130px #000;
+
+    position:relative;
+    
+    overflow: hidden;
+    max-height: 250px;
+}
+.item .img .shadow {
+    box-shadow: inset 2px 27px 112px #000;
+    -webkit-box-shadow:inset 2px 27px 112px #000;
+    -moz-box-shadow: inset 2px 27px 112px #000;
+    -o-box-shadow: inset 2px 27px 112px #000;
+    min-height: 192px;
+    height: auto;
+    width: 100%;
+    position: absolute;
+    top: 0px;
+    display: none;
+}
+.item .img img {
+    width: 100%;
+    position: relative;
+    z-index: -5;
+    display: block;
+    height: 100%;
+}
+
+.item .img .wrapper {
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    color: #fff;
+    text-shadow: none;
+    padding: 0px 0px 0px;
+    box-sizing: border-box;
+}
+
+ .wrapper h3 {
+    margin: 0px auto 10px;
+    padding: 0px 10px;
+}
+
+.info {
+    padding: 10px 3px 15px 5px;
+    background: rgba(0, 0, 0, 0.59);
+    /* width: 98%; */
+}
+.wrapper .info div{
+    padding:0px 5px 0px 0px;
+}
+.wrapper .info div {
+    font: normal 0.75em 'Yekan' !important;
+    height: 50px;
+    padding: 17px 0px;
+    text-align: center;
+    background-position: center top;
+    /* background-color: rgba(0, 0, 0, 0.57); */
+}
+
+.wrapper .area {
+    background: url(../img/icon-area.svg) no-repeat;
+    background-size: 18px 18px;
+}
+.wrapper .bed {
+    background: url(../img/icon-bed.svg) no-repeat;
+    background-size: 18px 18px;
+}
+.wrapper .price {
+    background: url(../img/icon-dollar.svg) no-repeat;
+    background-size: 18px 18px;
+}
+.item .btns {
+    border-top:2px solid #ffcb05;
+    border-bottom:2px solid #ffcb05;
+    padding: 5px 0px;
+}
+
+.btns div {
+    display: inline-block;
+    padding: 0px 2px;
+    width: 30%;
+    text-align: right;
+}
+.btns div:first-of-type {
+    background: url(../plugins/jquery.mobile-1.4.5/images/icons-svg/star-black.svg) no-repeat 0px center;
+}
+.btns div:nth-of-type(2) {
+    border-right: 2px solid #ffcb05;
+    border-left: 2px solid #ffcb05;
+    background: url(../plugins/jquery.mobile-1.4.5/images/icons-svg/heart-black.svg) no-repeat 4px center;
+}
+.btns div:last-of-type {
+    background: url(../plugins/jquery.mobile-1.4.5/images/icons-svg/info-black.svg) no-repeat 0px center;
+}
+.item a {
+    font: bold 0.78em 'Yekan';
+    margin: 0px auto !important;
+    display:block;
+    color:#333;
+    text-decoration:none;
+    padding: 0px 3px 0px 0px;
+}
+
+    /************
+    login & register
+    *************/
+   #login .logo {
+       display:block;
+       margin:0px auto;
+       position:relative;
+       top: 0px;
+       opacity:0;
+       filter: alpha(opacity=0);
+       width: 135px;
+}
+   #login .login {
+       opacity: 0;
+       filter: alpha(opacity=0);
+       top:0px;
+       position:relative;
+   
+       margin-bottom: 30px;
+}
+    legend {
+       width:100%;
+   }
+    legend.forget {
+        display:none;
+    }
+    .login .wrapper {
+        width: 276px;
+        margin: 20px auto;
+    }
+    .login .ui-link {
+       display:inline-block;
+       margin: 5px 0px;    
+      
+}
+/**************
+    single-building page 
+    ******************/
+.slider {
+    position:relative;
+    margin-bottom: 20px !important;
+   
+    /* overflow: hidden; */
+    /* max-height: 667px !important; */
+    width: auto;
+    /* max-width: 600px; */
+    /* height: 50vh !important; */
+}
+
+
+
+.slider img {
+    width: 100%;
+    /* height: 300px; */
+    display: block;
+    margin: 0px auto;
+}
+#single-building .wrapper ,#single-news .wrapper {
+    clear: both;
+    position: relative;
+    margin: 30px auto;
+    /* top: 40px; */
+}
+#single-building .price {
+    clear:both;
+    position:relative;
+    /* top:40px; */
+    text-align:center;
+    border:2px solid #ffcb05;
+    border-radius:7px;
+
+    padding: 5px 0px;
+    margin: 20px auto;
+}
+#single-building .price div:first-of-type {
+    font-size: 1.25em;
+    border-left: 2px solid #ffcb05;
+}
+
+#single-building .price div:last-of-type {
+    font-size: 1.1em;
+}
+
+#single-building .price p {
+    margin: 0px auto;
+}
+#single-building .ui-controlgroup {
+    position: relative;
+    top: 40px;
+}
+
+#single-building .buttons {
+    position:relative;
+    clear:both;
+    /* top:40px; */
+
+    border-radius: 7px;
+}
+
+.buttons a {
+    display: block;
+    padding: 10px 5px;
+    border-radius: 0px !important;
+}
+
+.buttons a:first-of-type {
+    border-left: 1px solid #000;
+}
+#single-building .map {
+    min-height:300px;
+    border: 1px solid #FF0000;
+    width: 100%;
+    margin: 0px auto;
+}
+.pagination {
+    display:block;
+    padding: 0px 0px;
+    margin:0px auto;
+    position:relative;
+    width: auto;
+    min-width: 200px;
+}
+.pagination li {
+    display:inline-block;
+}
+.pagination li a {
+    display:block;
+    width:30px;
+    height:30px;
+    background: #F9EBB7;
+    border-radius:2px;
+    text-decoration: none;
+    text-align: center;
+    color: #000;
+}
+
+.pagination li.active a {
+    background: #ffcb05;
+    box-shadow: inset 1px 1px 5px rgba(0, 0, 0, 0.22);
+}
+/*************
+Swiper styles
+*****************/
+.ws_cover {
+    display:none;
+}
+
+/*******************
+    media Queries
+    *******************/
+@media all and (min-width:580px)and (max-width:767px) {
+    #buildings .item , #news .item{
+        display:inline-block;
+        width: 48%;
+        margin: 0px 5px 5px 0px;
+        /* float: right; */
+}
+}
+@media all and (min-width:768px)and (max-width:991px) {
+    #buildings .item , #news .item{
+        display:inline-block;
+        width: 48%;
+        margin: 0px 10px 10px 0px;
+        float: right;
+    }
+}
+@media all and (min-width:992px) {
+    #buildings .item , #news .item {
+        display:inline-block;
+        width: 24%;
+        margin: 0px 5px 5px 0px;
+        /* float: right; */
+    }
+}

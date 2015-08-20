@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tehranlux</title>
+    <link rel="stylesheet" href="assets/plugins/jquery.mobile-1.4.5/jquery.mobile-1.4.5.min.css"/>
+    <link rel="stylesheet" href="assets/plugins/jquery.mobile-1.4.5/jquery.mobile.theme-1.4.5.min.css"/>
+    <link rel="stylesheet" href="assets/plugins/jquery.mobile-1.4.5/theme-f.min.css"/>
+    <link rel="stylesheet" href="assets/plugins/jquery.mobile-1.4.5/jquery.mobile.structure-1.4.5.min.css"/>
+    <link rel="stylesheet" href="assets/plugins/jquery.mobile-1.4.5/jquery.mobile.icons-1.4.5.min.css"/>
+    <link rel="stylesheet" href="assets/plugins/jquery.mobile-1.4.5/rtl.jquery.mobile.css"/>
+
+
+    <link rel="stylesheet" href="assets/plugins/swiper/swiper.min.css" type="text/css"/>
+    <link rel="stylesheet" href="assets/css/custom.css"/>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/plugins/jquery.mobile-1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+    <script src="assets/js/readJSON.js"></script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?v=3&sensor=false"></script>
+
+    <!--MD5-->
+    <script src="assets/js/md5.min.js"></script>
+
+    <!--checkforlogin method-->
+    <script>
+        function checkForLogin(LoginTrue,LoginFalse){
+            var password = window.localStorage.getItem('password');
+            var username = window.localStorage.getItem('username');
+            var isLogin = window.localStorage.getItem('login');
+
+            console.log(password +" " +username +" " +isLogin);
+
+            try {
+                if (isLogin.localeCompare('login') == 0) {
+                    console.log("here");
+                    var post_item = {username: username, password: password, login: "login"};
+                    readJSON("https://tehranlux.com/appLogin", post_item, connectedToServer, LoginFalse);
+                    function connectedToServer(answer_item) {
+                        var answer = JSON.parse(answer_item);
+                        console.log(answer);
+                        if (answer.status) {
+                            console.log("login");
+                            LoginTrue();
+                        } else {
+                            console.log("fail");
+                            LoginFalse();
+                        }
+                    }
+                } else {
+                    LoginFalse();
+                }
+            } catch(e){
+                LoginFalse();
+            }
+
+        }
+    </script>
+    <!--buildings-->
+    <script>
+        function onBuildingsInHomeClick() {
+            buildings_newPageLoader("https://tehranlux.com/appBuildings");
+            function ok(){console.log("goood");}
+            function ko(){console.log("bad");}
+            checkForLogin(ok,ko);
+        }
+
+        function buildings_newPageLoader(sourceUrl){
+            readJSON(sourceUrl, "", rightGetBuildings, errorGetBuildings);
+            document.getElementById("buildings_content_div").innerHTML = "<img src='assets/img/loading.GIF'/>";
+            function rightGetBuildings(buldings_item) {
+                var jsonArray = JSON.parse(buldings_item);
+                var pagination = jsonArray.pagination;
+                jsonArray = jsonArray.posts;
+                changeContentOfBuildings(jsonArray,pagination);
+                console.log("buildings : ");
+                console.log(jsonArray);
+                console.log(pagination);
+            }
+
+            function errorGetBuildings() {
+                alert("KO");
+                document.getElementById("buildings_content_div").innerHTML = "<h4>خطا در دسترسی به ساختمان ها</h4>";
+            }
+
+            function changeContentOfBuildings(buildingsArray,pagination) {
+                var content = document.getElementById("buildings_content_div");
+                var builder = "";
+                //content.innerHTML = "<img src='assets/plugins/jquery.mobile-1.4.5/images/ajax-loader.gif'/>";
+                for (var i = 0; i < buildingsArray.length; i++) {
+                    builder += "<div class='item'><div class='img'>";
+                    builder += "<a href='#single-building' onclick='onSingleBuildingClick(\""+ buildingsArray[i].link+"\")'><img src=" + buildingsArray[i].image + " alt='building'/></a>";
+                    builder += "<div class='wrapper'>";
+                    builder += "<h3>" + buildingsArray[i].title + "</h3>";
+                    builder += "<div class='ui-grid-b info'>";
+                    builder += "<div data-icon='vs-area' data-iconpos='top' class='ui-block-a area'>" + buildingsArray[i].metraj;
+                    if(buildingsArray[i].metraj.localeCompare("نا مشخص") != 0) {
+                        builder += " متر مربع";
+                    }
+                    builder += "</div>";
+                    builder += "<div data-icon='vs-bed' data-iconpos='top' class='ui-block-b bed'>" +buildingsArray[i].bedroom+ "</div>";
+                    if(buildingsArray[i].price == false) {
+                        builder += "<div data-icon='vs-dollar' data-iconpos='top' class='ui-block-c price'>نامشخص</div>";
+                    }else{
+                        builder += "<div data-icon='vs-dollar' data-iconpos='top' class='ui-block-c price'>" + buildingsArray[i].price + " تومان</div>";
+                    }
+                    builder += "</div>";
+                    builder += "</div>";
+                    builder += "</div></div>";
+                }
+                builder += pagination;
+                content.innerHTML = builder;
+
+                var a = document.getElementsByClassName('page_ajax');
+                for(var i = 0; i < a.length ; i++){
+//                    console.log(a[i].getAttribute('data-page'));
+                    a[i].onclick = function(){
+                        pagination_reloder(this.getAttribute('data-page'),1);
+                    };
+                }
+            }
+        }
+    </script>
+    <!--single buildings-->
+    <script>
+        function onSingleBuildingClick(link){
+            console.log("single building : ");
+            $("#single_building_like_box").hide();
+            console.log(link);
+
+            $("#single_building_details").html("<img src='assets/img/loading.GIF'/>");
+            $("#map-canvas").html("<img src='assets/img/loading.GIF'/>");
+            readJSON(link,"",rightGetBuilding,errorGetBuilding);
+            function rightGetBuilding(building_item){
+                var building_details = JSON.parse(building_item);
+                console.log(building_details);
+                makeContentOfSingleBuilding(building_details)
+            }
+            function errorGetBuilding(){
+
+            }
+
+            function makeContentOfSingleBuilding(building_details){
+                document.getElementById("single_building_header").innerHTML = building_details.building.title;
+                var builder = "";
+                $("#single_building_details").html("");
+                builder += "<div data-role='collapsible'>";
+                builder += "<h3>درباره ی ساختمان</h3>";
+                builder += "<p><span>"+building_details.building.content+"</span></p>";
+                builder += "</div>";
+
+                var help = [];
+                var isFull = isGeneralInfoFull(help,building_details);
+
+                if(isFull == 1){
+                    builder += "<div data-role='collapsible'>";
+                    builder += "<h3>اطلاعات کلی ساختمان</h3>";
+                    builder += "<p>";
+
+                    if(help[0] != 0){
+                        builder += "<span>"+"تاریخ ساخت ساختمان : "+help[0]+"</span><br/>";
+                    }
+                    if(help[1] != 0){
+                        builder += "<span>"+"مساحت کلی : "+help[1]+"</span><br/>";
+                    }
+                    if(help[2] != 0){
+                        builder += "<span>"+"سبک معماری  : "+help[2]+"</span><br/>";
+                    }
+                    if(help[3] != 0){
+                        builder += "<span>"+"طبقات تیپ : "+help[3]+"</span><br/>";
+                    }
+                    if(help[4] != 0){
+                        builder += "<span>"+"تعداد واحد در طبقات تیپ : "+help[4]+"</span><br/>";
+                    }
+                    if(help[5] != 0){
+                        builder += "<span>"+"سیستم گرمایش و سرمایش : "+help[5]+"</span><br/>";
+                    }
+                    if(help[6] != 0){
+                        builder += "<span>"+"مساحت لابی : "+help[6]+"</span><br/>";
+                    }
+                    if(help[7] != 0){
+                        builder += "<span>"+"تعداد طبقات : "+help[7]+"</span><br/>";
+                    }
+                    if(help[8] != 0){
+                        builder += "<span>"+"تعداد واحدها :  "+help[8]+"</span><br/>";
+                    }
+                    if(help[9] != 0){
+                        builder += "<span>"+"نما : "+help[9]+"</span><br/>";
+                    }
+
+                    builder += "</p>";
+                    builder += "</div>";
+                }
+
+                help = [];
+                isFull = isSampleInfoFull(help,building_details);
+                if(isFull == 1){
+                    builder += "<div data-role='collapsible'>";
+                    builder += "<h3>اطلاعات کلی واحدها</h3>";
+                    builder += "<p>";
+                    if(help[0] != 0){
+                        builder += "<span>"+"حمام : "+help[0]+"</span><br/>";
+                    }
+                    if(help[1] != 0){
+                        builder += "<span>"+"اتاق خواب : "+help[1]+"</span><br/>";
+                    }
+                    if(help[2] != 0){
+                        builder += "<span>"+"طبقه واحد نمونه : "+help[2]+"</span><br/>";
+                    }
+                    if(help[3] != 0){
+                        builder += "<span>"+"آشپزخانه : "+help[3]+"</span><br/>";
+                    }
+                    if(help[4] != 0){
+                        builder += "<span>"+"متراژ : "+help[4]+"</span><br/>";
+                    }
+                    if(help[5] != 0){
+                        builder += "<span>"+"پارکینگ : "+help[5]+"</span><br/>";
+                    }
+                    if(help[6] != 0){
+                        builder += "<span>"+"مساحت واحد نمونه : "+help[6]+"</span><br/>";
+                    }
+                    if(help[7] != 0){
+                        builder += "<span>"+"تراس : "+help[7]+"</span><br/>";
+                    }
+                    if(help[8] != 0){
+                        builder += "<span>"+"پوشش دیوار : "+help[8]+"</span><br/>";
+                    }
+                    if(help[9] != 0){
+                        builder += "<span>"+"سرویس بهداشتی : "+help[9]+"</span><br/>";
+                    }
+
+                    builder += "</p>";
+                    builder += "</div>";
+                }
+
+                help = building_details.amenities;
+                if(help.length > 0){
+                    builder += "<div data-role='collapsible'>";
+                    builder += "<h3>امکانات رفاهی</h3>";
+                    builder += "<p>";
+                    for(var i=0; i < help.length; i++){
+                        builder += "<span>"+help[i]+"</span><br/>";
+                    }
+                    builder += "</p>";
+                    builder += "</div>";
+                }
+
+                if(building_details.builder.name.localeCompare("") != 0 | building_details.architect.name.localeCompare(" None") != 0 ){
+                    builder += "<div data-role='collapsible'>";
+                    builder += "<h3>معمار و سازنده</h3>";
+                    builder += "<p>";
+                    if(building_details.architect.name.localeCompare(" None") != 0){
+                        console.log(building_details.architect.name + " " +building_details.architect.name.localeCompare("None"));
+                        builder += "<span> معمار : "+building_details.architect.name+"</span><br/>";
+                    }
+                    if(building_details.builder.name.localeCompare("") != 0){
+                        builder += "<span>سازنده : "+building_details.builder.name+"</span><br/>";
+                    }
+                    builder += "</p>";
+                    builder += "</div>";
+                }
+                $("#single_building_details").append(builder).enhanceWithin();
+
+                if(building_details.google_map.lat.localeCompare("") != 0 & building_details.google_map.lng.localeCompare("") != 0){
+                    var location = new google.maps.LatLng(building_details.google_map.lat,building_details.google_map.lng);
+                    var mapOptions = {
+                        zoom: 12,
+                        center: location,
+                        mapTypeId: google.maps.MapTypeId.ROADMAP
+                    };
+
+                    map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+                    var latti = Number(building_details.google_map.lat);
+                    var longt = Number(building_details.google_map.lng);
+
+                    var myLatLng = {lat: latti, lng: longt};
+
+                    var marker = new google.maps.Marker({
+                        position: myLatLng,
+                        title: building_details.building.title
+                    });
+
+                    marker.setMap(map);
+                    $("#map-canvas").show();
+                }else{
+                    $("#map-canvas").hide();
+                }
+
+                if(building_details.price.single.localeCompare("") != 0){
+                    $("#single_building_price").html("<p>"+building_details.price.single+" تومان"+"</p>");
+                }else{
+                    $("#single_building_price").html("<p>نامشخص</p>");
+                }
+
+                checkForLogin(showBox,hideBox);
+
+                function hideBox(){
+                    $("#single_building_like_box").hide();
+                }
+                function showBox(){
+                    $("#single_building_like_box").show();
+                }
+
+            }
+        }
+
+        function isGeneralInfoFull(help,bulding_detail){
+            help.push(bulding_detail.generalInfo.age);
+            help.push(bulding_detail.generalInfo.allSpace);
+            help.push(bulding_detail.generalInfo.architecture);
+            help.push(bulding_detail.generalInfo.brigadeFloors);
+            help.push(bulding_detail.generalInfo.brigadeNumUnit);
+            help.push(bulding_detail.generalInfo.hot_cold);
+            help.push(bulding_detail.generalInfo.lobbySpace);
+            help.push(bulding_detail.generalInfo.numFloors);
+            help.push(bulding_detail.generalInfo.numUnit);
+            help.push(bulding_detail.generalInfo.view);
+
+            for(var i = 0; i < help.length; i++){
+                if(help[i].localeCompare("") != 0){
+                    return 1;
+                }
+            }
+            return 0;
+        }
+
+        function isSampleInfoFull(help,building_detail){
+            help.push(building_detail.sampleInfo.bathroom);
+            help.push(building_detail.sampleInfo.bedroom);
+            help.push(building_detail.sampleInfo.floor);
+            help.push(building_detail.sampleInfo.kitchen);
+            help.push(building_detail.sampleInfo.metraj);
+            help.push(building_detail.sampleInfo.parking);
+            help.push(building_detail.sampleInfo.space);
+            help.push(building_detail.sampleInfo.terrace);
+            help.push(building_detail.sampleInfo.wall_covering);
+            help.push(building_detail.sampleInfo.wc);
+
+            for(var i = 0; i < help.length; i++){
+                if(help[i].localeCompare("") != 0){
+                    return 1;
+                }
+            }
+            return 0;
+        }
+    </script>
+    <!--news-->
+    <script>
+        function onNewsInHomeClick(){
+            news_newPageLoader("https://tehranlux.com/appNews/index");
+        }
+
+
+        function news_newPageLoader(sourceUrl){
+            readJSON(sourceUrl,"",rightGetNews,errorGetNews);
+            document.getElementById("content_news_div").innerHTML = "<img src='assets/img/loading.GIF'/>";
+            function rightGetNews(news_items){
+                var jsonArray = JSON.parse(news_items);
+                var pagination = jsonArray.pagination;
+                jsonArray = jsonArray.posts;
+                changeContentOfNews(jsonArray,pagination);
+                console.log("news : ");
+                console.log(jsonArray);
+            }
+
+            function errorGetNews(){
+                alert("fail");
+                document.getElementById("content_news_div").innerHTML = "<h4>خطا در دسترسی به اخبار</h4>"
+            }
+
+            function changeContentOfNews(newsArray,pagination){
+                var content = document.getElementById("content_news_div");
+                var builder = "";
+                for (var i = 0; i < newsArray.length; i++) {
+                    builder += "<div class='item'> <div class='img'>";
+                    builder += "<a href='#single-news' onclick='onSingleNews(\""+newsArray[i].slug+"\")'><img src="+newsArray[i].image+" alt='building'/></a>";
+                    builder += "<div class='wrapper'><h3>"+newsArray[i].title+"</h3> </div>";
+                    builder += "</div></div>"
+                }
+                builder += pagination;
+                console.log("pagination");
+                console.log(pagination);
+                /*        <ul class="pagination">
+                 <li><a href="#"> < </a></li>
+                 <li class="active"><a href="#">1</a></li>
+                 <li><a href="#">2</a></li>
+                 <li><a href="#">3</a></li>
+                 <li><a href="#"> > </a></li>
+                 </ul>*/
+
+                content.innerHTML = builder;
+
+                var a = document.getElementsByClassName('page_ajax');
+                for(var i = 0; i < a.length ; i++){
+//                    console.log(a[i].getAttribute('data-page'));
+                    a[i].onclick = function(){
+                        pagination_reloder(this.getAttribute('data-page'),0);
+                    };
+                }
+            }
+        }
+
+    </script>
+    <!--pagination loader-->
+    <script>
+        function pagination_reloder(myurl , numSection){
+            console.log(myurl);
+            if(numSection == 0){
+                news_newPageLoader(myurl);
+            } else if(numSection == 1){
+                buildings_newPageLoader(myurl);
+            }
+        }
+    </script>
+    <!--single newa-->
+    <script>
+        function onSingleNews(slug){
+            readJSON("https://tehranlux.com/appNews/view/"+slug,"",rightGetSingleNews,errorGetSingleNews);
+            document.getElementById("text_of_singlenews").innerHTML = "<img src='assets/img/loading.GIF'/>";
+            function rightGetSingleNews(news_items){
+                var jsonArray = JSON.parse(news_items);
+                var news_details = jsonArray.post.post;
+                changeContentOfSingleNews(news_details);
+//                console.log("single news : ");
+//                console.log(jsonArray);
+                console.log("single news");
+                console.log(jsonArray);
+            }
+
+            function errorGetSingleNews(){
+                alert("fail");
+                document.getElementById("text_of_singlenews").innerHTML = "<h4>خطا در دسترسی به اخبار</h4>"
+            }
+
+            function changeContentOfSingleNews(news_details){
+                var content;
+                var builder;
+                content = document.getElementById("text_of_singlenews");
+                builder = "";
+                builder += "<h3>" + news_details.title + "</h3>";
+                builder += "<p>"+news_details.content+"</p>";
+                content.innerHTML = builder;
+            }
+        }
+    </script>
+    <!--page manager-->
+    <script>
+        // page manager
+        $(document).on("pagebeforeshow","#news",onNewsInHomeClick);
+        $(document).on("pagebeforeshow","#buildings",onBuildingsInHomeClick);
+//        $(document).on("pageshow","#splash",splashShow);
+    </script>
+    <!--login-->
+    <script>
+
+        function onLoginClick(){
+//            console.log("im here");
+//            $.mobile.changePage("#login",{});
+
+            console.log("login : ");
+            var username = $("#login_username").val();
+            var password = $("#login_pass").val();
+
+            if(username.localeCompare("") == 0){
+                console.log("empty email");
+            } else if(password.localeCompare("") == 0){
+                console.log("empty password");
+            }else{
+                password = md5(password);
+                var post_item = {username:username,password:password,login:"login"};
+                console.log(post_item);
+                readJSON("https://tehranlux.com/appLogin",post_item,rightConnectLogin,errorConnectLogin);
+                function rightConnectLogin(answer){
+                    var answer_json = JSON.parse(answer);
+                    console.log(answer_json);
+                    var isLogin = answer_json.status;
+                    window.localStorage.setItem('login',isLogin);
+                    if(isLogin){
+                        window.localStorage.setItem('password',password);
+                        window.localStorage.setItem('username',username);
+                        window.localStorage.setItem('login','login');
+                        successFullLogin();
+                    } else {
+                        window.localStorage.setItem('password',password);
+                        window.localStorage.setItem('username',username);
+                        window.localStorage.setItem('login','logout');
+                        failLogin();
+                    }
+
+                }
+                function errorConnectLogin(){
+                    console.log("riiiiiiiiiiiiiiidiiiiiiiiiiiii");
+                }
+            }
+        }
+
+        function successFullLogin(){
+            $.mobile.changePage("#home",{});
+        }
+
+        function failLogin(){
+            console.log("username or password is wrong");
+        }
+    </script>
+
+
+    <script>
+        $(document).bind("mobileinit", function(){
+            $.mobile.allowCrossDomainPages = true;
+        });
+    </script>
+</head>
+
+
+<body dir="rtl">
+<!-- Splash -->
+<div data-role="page" class="page" id="splash">
+    <img src="assets/img/logo.svg" alt="logo"/>
+
+
+</div>
+<!-- Login -->
+<div data-role="page" class="page" id="login">
+    <!-- Header -->
+    <div data-role="header" class="header" data-theme="f" data-id="header" data-position="fixed">
+        <a href="#panel" data-role="button" data-icon="bars" data-iconpos="notext" class="ui-btn-right"></a>
+
+        <h1>تهران لوکس</h1>
+    </div>
+    <!-- Content -->
+    <div data-role="content" class="content">
+        <img class="logo" src="assets/img/logo.svg" alt="logo"/>
+
+        <form class="login" method="post" action="">
+            <legend id="login_box">
+                <input type="text" id="login_username" placeholder="نام کاربری . . ."/>
+                <input type="password" id="login_pass" placeholder="رمز عبور . . ."/>
+            </legend>
+            <legend>
+                <input type="button" data-theme="f" onclick="onLoginClick()" value="ورود"/>
+
+                <div class="wrapper">
+                    <a href="#register" data-role="button" data-inline="true" data-theme="f">میخوام ثبت نام کنم :)</a>
+                    <a href="#" data-role="button" class="forget" data-inline="true" data-theme="f">رمز رو فراموش کردم
+                        :(</a>
+                </div>
+
+            </legend>
+            <legend class="forget">
+                <label>دوست عزیز لطفا ایمیلت رو وارد کن</label>
+                <input type="text" placeholder="ایمیل . . ."/>
+                <input type="button" value="ارسال"/>
+            </legend>
+
+        </form>
+    </div>
+    <div data-role="footer" class="footer" data-id="footer" data-theme="f">
+        <h2>تمامی حقوق برای تهران لوکس محفوظ است. 1394 &copy;</h2>
+    </div>
+
+</div>
+<!-- Home Page -->
+<div data-role="page" class="page" id="home">
+    <!-- Header -->
+    <div data-role="header" class="header" data-theme="f" data-id="header" data-position="fixed">
+        <a href="#panel" data-role="button" data-icon="bars" data-iconpos="notext" class="ui-btn-right"></a>
+
+        <h1>تهران لوکس</h1>
+    </div>
+    <!-- Content -->
+    <div data-role="content" class="content">
+        <div class="ui-grid-a">
+            <div class="ui-block-a">
+                <a href="#buildings" data-icon="false">
+                    <img src="assets/img/building-2.svg" alt="buildings"/>
+                </a>
+            </div>
+            <div class="ui-block-b">
+                <a href="#materials" data-icon="false">
+                    <img src="assets/img/furniture31.svg" alt="buildings"/>
+                </a>
+
+            </div>
+            <div class="ui-block-a">
+                <a href="#news" data-icon="false">
+                    <img src="assets/img/news.svg" alt="buildings"/>
+                </a>
+            </div>
+            <div class="ui-block-b">
+                <a href="#videos" data-icon="false">
+                    <img src="assets/img/video.svg" alt="buildings"/>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div data-role="footer" class="footer" data-id="footer" data-theme="f">
+        <h2>تمامی حقوق برای تهران لوکس محفوظ است. 1394 &copy;</h2>
+    </div>
+
+</div>
+<!-- Buildings -->
+<div data-role="page" class="page" id="buildings">
+    <!-- Header -->
+    <div data-role="header" class="header" data-theme="f" data-id="header" data-position="fixed">
+        <a href="#panel" data-role="button" data-icon="bars" data-iconpos="notext" class="ui-btn-right"></a>
+
+        <h1>تهران لوکس</h1>
+    </div>
+    <!-- Content -->
+    <div data-role="content" class="content" id="buildings_content_div">
+        <div class="item">
+            <div class="img">
+                <a href="#single-building">
+                    <img src="assets/img/filler.jpg" alt="building"/>
+                </a>
+
+                <div class="wrapper">
+                    <h3>
+                        ساختمان ماهوتچیان
+                    </h3>
+
+                    <div class="ui-grid-b info">
+                        <div data-icon='vs-area' data-iconpos='top' class='ui-block-a area'>2000 متر مربع</div>
+                        <div data-icon="vs-bed" data-iconpos="top" class="ui-block-b bed">
+                            5
+                        </div>
+                        <div data-icon="vs-dollar" data-iconpos="top" class="ui-block-c price">
+                            1234567890 تومان
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="img">
+                <a href="#single-building">
+                    <img src="assets/img/filler.jpg" alt="building"/>
+                </a>
+
+                <div class="wrapper">
+                    <h3>
+                        ساختمان ماهوتچیان
+                    </h3>
+
+                    <div class="ui-grid-b info">
+                        <div data-icon='vs-area' data-iconpos='top' class='ui-block-a area'>2000 متر مربع</div>
+                        <div data-icon="vs-bed" data-iconpos="top" class="ui-block-b bed">
+                            5
+                        </div>
+                        <div data-icon="vs-dollar" data-iconpos="top" class="ui-block-c price">
+                            1234567890 تومان
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="img">
+                <a href="#single-building">
+                    <img src="assets/img/filler.jpg" alt="building"/>
+                </a>
+
+                <div class="wrapper">
+                    <h3>
+                        ساختمان ماهوتچیان
+                    </h3>
+
+                    <div class="ui-grid-b info">
+                        <div data-icon='vs-area' data-iconpos='top' class='ui-block-a area'>2000 متر مربع</div>
+                        <div data-icon="vs-bed" data-iconpos="top" class="ui-block-b bed">
+                            5
+                        </div>
+                        <div data-icon="vs-dollar" data-iconpos="top" class="ui-block-c price">
+                            1234567890 تومان
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="img">
+                <a href="#single-building">
+                    <img src="assets/img/filler.jpg" alt="building"/>
+                </a>
+
+                <div class="wrapper">
+                    <h3>
+                        ساختمان ماهوتچیان
+                    </h3>
+
+                    <div class="ui-grid-b info">
+                        <div data-icon='vs-area' data-iconpos='top' class='ui-block-a area'>2000 متر مربع</div>
+                        <div data-icon="vs-bed" data-iconpos="top" class="ui-block-b bed">
+                            5
+                        </div>
+                        <div data-icon="vs-dollar" data-iconpos="top" class="ui-block-c price">
+                            1234567890 تومان
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- pagination -->
+        <ul class="pagination">
+            <li><a href="#"> < </a></li>
+            <li class="active"><a href="#">1</a></li>
+            <li><a href="#">2</a></li>
+            <li><a href="#">3</a></li>
+            <li><a href="#"> > </a></li>
+        </ul>
+    </div>
+    <div data-role="footer" class="footer" data-id="footer" data-theme="f">
+        <h2>تمامی حقوق برای تهران لوکس محفوظ است. 1394 &copy;</h2>
+    </div>
+
+</div>
+<!--single Buildings-->
+<div data-role="page" class="page" id="single-building">
+    <!-- Header-->
+    <div data-role="header" class="header" data-theme="f" data-id="header" data-position="fixed">
+        <a href="#panel" data-role="button" data-icon="bars" data-iconpos="notext" class="ui-btn-right"></a>
+
+        <h1 id="single_building_header">تهران لوکس</h1>
+        <a href="" data-role="button" data-icon="back" data-iconpos="notext" data-rel="back" class="ui-btn-left"></a>
+    </div>
+    <!--Content-->
+    <div data-role="content" class="content">
+        <!--Slider main container-->
+        <div class="swiper-container slider" dir="ltr" id="single_building_swiper_container">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide"><img src="assets/img/1.jpg" alt="1"/></div>
+                <div class="swiper-slide"><img src="assets/img/2.jpg" alt="2"/></div>
+                <div class="swiper-slide"><img src="assets/img/3.jpg" alt="3"/></div>
+                <div class="swiper-slide"><img src="assets/img/4.jpg" alt="4"/></div>
+            </div>
+            <!-- Add Pagination -->
+            <div class="swiper-pagination"></div>
+        </div>
+        <!--details-->
+        <div class="wrapper" id="single_building_details">
+            <!--<div data-role="collapsible">-->
+                <!--<h3>ویژگی ها</h3>-->
+
+                <!--<p>-->
+                    <!--<span>اتاق خواب: </span>-->
+                    <!--<span>4</span>-->
+                    <!--<br/>-->
+                    <!--<span>سرویس بهداشتی</span>-->
+                    <!--<span>2</span>-->
+                    <!--<br/>-->
+                    <!--<span>سایر امکانات: </span>-->
+                    <!--<span>استخر، جکوزی، زمین بازی کودکان، و . . . </span>-->
+
+                <!--</p>-->
+            <!--</div>-->
+            <!--<div data-role="collapsible">-->
+                <!--<h3>ویژگی ها</h3>-->
+
+                <!--<p>-->
+                    <!--<span>اتاق خواب: </span>-->
+                    <!--<span>4</span>-->
+                    <!--<br/>-->
+                    <!--<span>سرویس بهداشتی</span>-->
+                    <!--<span>2</span>-->
+                    <!--<br/>-->
+                    <!--<span>سایر امکانات: </span>-->
+                    <!--<span>استخر، جکوزی، زمین بازی کودکان، و . . . </span>-->
+
+                <!--</p>-->
+            <!--</div>-->
+            <!--<div data-role="collapsible">-->
+                <!--<h3>ویژگی ها</h3>-->
+
+                <!--<p>-->
+                    <!--<span>اتاق خواب: </span>-->
+                    <!--<span>4</span>-->
+                    <!--<br/>-->
+                    <!--<span>سرویس بهداشتی</span>-->
+                    <!--<span>2</span>-->
+                    <!--<br/>-->
+                    <!--<span>سایر امکانات: </span>-->
+                    <!--<span>استخر، جکوزی، زمین بازی کودکان، و . . . </span>-->
+
+                <!--</p>-->
+            <!--</div>-->
+        </div>
+        <!--Map & Location-->
+        <div role="main" class="wrapper map" id="map-canvas">
+            <!--<div role="main" class="ui-content" id="map-canvas">-->
+                <!--&lt;!&ndash; map loads here... &ndash;&gt;-->
+            <!--</div>-->
+        </div>
+        <!--price details-->
+        <div class="price ui-grid-a">
+            <div class="ui-block-a">
+                <p>قیمت: </p>
+            </div>
+            <div class="ui-block-b" id="single_building_price">
+                <p>1234567890 تومان</p>
+            </div>
+        </div>
+        <!-- Action-->
+        <div class="buttons ui-grid-a" id="single_building_like_box">
+            <a href="#" class="ui-block-a" data-role="button" data-icon="heart" data-theme="f">دوستش دارم</a>
+            <a href="#" class="ui-block-b" data-role="button" data-icon="star" data-theme="f">ذخیره کن برام</a>
+        </div>
+    </div>
+    <!--Footer-->
+    <div data-role="footer" class="footer" data-id="footer" data-theme="f">
+        <h2>تمامی حقوق برای تهران لوکس محفوظ است. 1394 &copy;</h2>
+    </div>
+
+</div>
+<!-- Materials-->
+<div data-role="page" class="page" id="materials">
+    <!-- Header -->
+    <div data-role="header" class="header" data-theme="f" data-id="header" data-position="fixed">
+        <a href="#panel" data-role="button" data-icon="bars" data-iconpos="notext" class="ui-btn-right"></a>
+
+        <h1>تهران لوکس</h1>
+    </div>
+    <!-- Content -->
+    <div data-role="content" class="content">
+        Materials
+    </div>
+    <div data-role="footer" class="footer" data-id="footer" data-theme="f">
+        <h2>تمامی حقوق برای تهران لوکس محفوظ است. 1394 &copy;</h2>
+    </div>
+
+</div>
+<!-- News -->
+<div data-role="page" class="page" id="news">
+    <!-- Header -->
+    <div data-role="header" class="header" data-theme="f" data-id="header" data-position="fixed">
+        <a href="#panel" data-role="button" data-icon="bars" data-iconpos="notext" class="ui-btn-right"></a>
+
+        <h1>تهران لوکس</h1>
+    </div>
+    <!-- Content -->
+    <div data-role="content" class="content" id="content_news_div">
+        <div class="item">
+            <div class="img">
+                <a href="#single-news">
+                    <img src="assets/img/news/1.jpg" alt="building"/>
+                </a>
+
+                <div class="wrapper">
+                    <h3>
+                        پرنده ها - مرغ مگسخوار
+                    </h3>
+
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="img">
+                <a href="#single-news">
+                    <img src="assets/img/news/2.jpg" alt="building"/>
+                </a>
+
+                <div class="wrapper">
+                    <h3>
+                        بالن های رنگی رنگی
+                    </h3>
+
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="img">
+                <a href="#single-news">
+                    <img src="assets/img/news/3.jpg" alt="building"/>
+                </a>
+
+                <div class="wrapper">
+                    <h3>
+                        دنیز
+                    </h3>
+
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="img">
+                <a href="#single-news">
+                    <img src="assets/img/news/4.jpg" alt="building"/>
+                </a>
+
+                <div class="wrapper">
+                    <h3>
+                        قورباغه خوشحال
+                    </h3>
+
+                </div>
+            </div>
+        </div>
+        <!-- pagination -->
+        <ul class="pagination">
+            <li><a href="#"> < </a></li>
+            <li class="active"><a href="#">1</a></li>
+            <li><a href="#">2</a></li>
+            <li><a href="#">3</a></li>
+            <li><a href="#"> > </a></li>
+        </ul>
+    </div>
+    <div data-role="footer" class="footer" data-id="footer" data-theme="f">
+        <h2>تمامی حقوق برای تهران لوکس محفوظ است. 1394 &copy;</h2>
+    </div>
+
+</div>
+<!-- single News-->
+<div data-role="page" class="page" id="single-news">
+    <!-- Header -->
+    <div data-role="header" class="header" data-theme="f" data-id="header" data-position="fixed">
+        <a href="#panel" data-role="button" data-icon="bars" data-iconpos="notext" class="ui-btn-right"></a>
+
+        <h1>تهران لوکس</h1>
+        <a href="" data-role="button" data-icon="back" data-iconpos="notext" data-rel="back" class="ui-btn-left"></a>
+    </div>
+    <!-- Content -->
+    <div data-role="content" class="content" id="content_single-news_div">
+        <!-- Slider main container -->
+        <div class="swiper-container slider" dir="ltr" id="swiper_container">
+            <div class="swiper-wrapper" id="slider_images">
+                <div class="swiper-slide"><img src="assets/img/news/1.jpg" alt="1"/></div>
+                <div class="swiper-slide"><img src="assets/img/news/2.jpg" alt="2"/></div>
+                <div class="swiper-slide"><img src="assets/img/news/3.jpg" alt="3"/></div>
+                <div class="swiper-slide"><img src="assets/img/news/4.jpg" alt="4"/></div>
+            </div>
+            <!-- Add Pagination -->
+            <div class="swiper-pagination"></div>
+        </div>
+        <!-- details -->
+        <div class="wrapper" id="text_of_singlenews">
+            <h3>تیتر خبر</h3>
+
+            <p>متن خبر. شرح کلی در مورد تیتر، توضیح عکس ها ، معرفی عوامل تاثیرگذار و هرآنچه که در مورد یک مطلب حائز
+                اهمیت است.</p>
+
+            <p>متن خبر. شرح کلی در مورد تیتر، توضیح عکس ها ، معرفی عوامل تاثیرگذار و هرآنچه که در مورد یک مطلب حائز
+                اهمیت است.</p>
+        </div>
+
+    </div>
+    <!-- Footer-->
+    <div data-role="footer" class="footer" data-id="footer" data-theme="f">
+        <h2>تمامی حقوق برای تهران لوکس محفوظ است. 1394 &copy;</h2>
+    </div>
+
+</div>
+<!-- Videos -->
+<div data-role="page" class="page" id="videos">
+    <!-- Header -->
+    <div data-role="header" class="header" data-theme="f" data-id="header" data-position="fixed">
+        <a href="#panel" data-role="button" data-icon="bars" data-iconpos="notext" class="ui-btn-right"></a>
+
+        <h1>تهران لوکس</h1>
+    </div>
+    <!-- Content -->
+    <div data-role="content" class="content">
+        videos
+    </div>
+    <div data-role="footer" class="footer" data-id="footer" data-theme="f">
+        <h2>تمامی حقوق برای تهران لوکس محفوظ است. 1394 &copy;</h2>
+    </div>
+
+</div>
+
+<!-- Profile -->
+<div data-role="page" class="page" id="profile">
+    <!-- Header -->
+    <div data-role="header" class="header" data-theme="f" data-id="header" data-position="fixed">
+        <a href="#panel" data-role="button" data-icon="bars" data-iconpos="notext" class="ui-btn-right"></a>
+
+        <h1>تهران لوکس</h1>
+    </div>
+    <!-- Content -->
+    <div data-role="content" class="content">
+        profiles
+    </div>
+    <div data-role="footer" class="footer" data-id="footer" data-theme="f">
+        <h2>تمامی حقوق برای تهران لوکس محفوظ است. 1394 &copy;</h2>
+    </div>
+
+</div>
+<!-- Settings -->
+<div data-role="page" class="page" id="settings">
+    <!-- Header -->
+    <div data-role="header" class="header" data-theme="f" data-id="header" data-position="fixed">
+        <a href="#panel" data-role="button" data-icon="bars" data-iconpos="notext" class="ui-btn-right"></a>
+
+        <h1>تهران لوکس</h1>
+    </div>
+    <!-- Content -->
+    <div data-role="content" class="content">
+        Settings
+    </div>
+    <div data-role="footer" class="footer" data-id="footer" data-theme="f">
+        <h2>تمامی حقوق برای تهران لوکس محفوظ است. 1394 &copy;</h2>
+    </div>
+
+</div>
+
+<!-- Register -->
+<div data-role="page" class="page" id="register">
+    <!-- Header -->
+    <div data-role="header" class="header" data-theme="f" data-id="header" data-position="fixed">
+        <a href="#panel" data-role="button" data-icon="bars" data-iconpos="notext" class="ui-btn-right"></a>
+
+        <h1>تهران لوکس</h1>
+    </div>
+    <!-- Content -->
+    <div data-role="content" class="content">
+        <form class="register" method="post" action="">
+            <legend>
+                <input type="text" placeholder="نام کاربری . . ."/>
+                <input class="register" type="text" placeholder="ایمیل . . ."/>
+                <input type="password" placeholder="رمز عبور . . ."/>
+                <input class="register" type="password" placeholder="تکرار رمز عبور . . ."/>
+            </legend>
+            <legend>
+                <input type="submit" data-theme="f" value="ثبت نام"/>
+                <a href="#" data-role="button" data-rel="back" data-icon="back" data-theme="f">بازگشت</a>
+            </legend>
+        </form>
+    </div>
+    <div data-role="footer" class="footer" data-id="footer" data-theme="f">
+        <h2>تمامی حقوق برای تهران لوکس محفوظ است. 1394 &copy;</h2>
+    </div>
+
+</div>
+<!-- panel -->
+<div data-role="panel" id="panel" data-position="right" data-display="push" data-theme="b">
+    <form action="" method="post" class="search">
+        <input type="text" placeholder="عبارت مورد نظر را وارد کنید . . ." data-mini="true" data-inline="true"/>
+        <input type="submit" data-icon="search" data-iconpos="notext" data-theme="f" data-inline="true" value=""/>
+    </form>
+    <ul data-role="listview" class="menu" data-mini="true">
+        <li data-icon="home" data-theme="f">
+            <a href="#home" data-icon="false">خانه</a>
+        </li>
+        <li data-icon="user" data-theme="f">
+            <a href="#login" data-icon="false">پروفایل من</a>
+        </li>
+        <li data-icon="gear" data-theme="f">
+            <a href="#settings" data-icon="false">تنظیمات</a>
+        </li>
+        <li data-icon="back" data-theme="f">
+            <a href="#home" data-icon="false">خروج</a>
+        </li>
+    </ul>
+</div>
+<!-- /panel -->
+
+
+<!-- scripts -->
+<script src="assets/plugins/swiper/swiper.min.js"></script>
+<script type="text/javascript" src="assets/js/custom.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+<widget id="com.tehranlux.app" version="0.0.1">
+    <name>Tehranlux</name>
+    <author email="dev@callback.apache.org" href="https://tehranlux.com">
+        Tehranlux Team
+    </author>
+    <content src="tehranlux.html" />
+    <access origin="*" />
+    <icon src="assets/img/logo.svg" />
+    <access origin="https://tehranlux.com"  subdomains="true"/>
+	<preference name="permissions" value="none"/>
+	<feature name="http://api.phonegap.com/1.0/network"/>
+	
+	<gap:splash src="assets/img/logo.svg" />
+	<gap:plugin name="nl.x-services.plugins.toast" />
+
+ </widget>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="44.345249mm"
+   height="62.001923mm"
+   viewBox="0 0 157.12884 219.69185"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="dollar.svg">
+  <defs
+     id="defs4">
+    <clipPath
+       id="clipPath3350"
+       clipPathUnits="userSpaceOnUse">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3352"
+         d="m 292,411 9.841,0 0,18 -9.841,0 0,-18 z" />
+    </clipPath>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.58"
+     inkscape:cx="92.554595"
+     inkscape:cy="272.13674"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-width="1600"
+     inkscape:window-height="838"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-28.13506,-33.082951)">
+    <g
+       transform="matrix(15.966755,0,0,-12.822881,-4634.1574,5534.0989)"
+       inkscape:label="money191"
+       id="g3344"
+       style="fill:#ff7f2a;fill-opacity:1">
+      <g
+         id="g3346"
+         style="fill:#ff7f2a;fill-opacity:1">
+        <g
+           clip-path="url(#clipPath3350)"
+           id="g3348"
+           style="fill:#ff7f2a;fill-opacity:1">
+          <g
+             transform="translate(295.438,411.8672)"
+             id="g3354"
+             style="fill:#ff7f2a;fill-opacity:1">
+            <path
+               inkscape:connector-curvature="0"
+               id="path3356"
+               style="fill:#ff7f2a;fill-opacity:1;fill-rule:nonzero;stroke:none"
+               d="m 0,0 2.968,0 0,2.145 C 5.14,2.672 6.48,4.18 6.48,6.18 c 0,2.051 -1.09,3.305 -3.641,4.199 -0.937,0.34 -2.019,0.785 -2.019,1.188 0,0.523 0.738,0.605 1.176,0.605 1.285,0 2.105,-0.394 2.597,-0.633 l 0.567,-0.269 0.179,0.597 0.703,2.645 -0.39,0.187 C 5.128,14.942 4.296,15.25 3.066,15.356 l 0,1.777 -2.969,0 0,-1.992 c -2.062,-0.535 -3.332,-1.996 -3.332,-3.91 0,-2.473 2.086,-3.489 3.902,-4.102 C 2.21,6.605 2.425,6.23 2.425,5.902 2.425,5.418 1.722,5.198 1.031,5.198 c -1.356,0 -2.481,0.505 -3.028,0.806 L -2.583,6.323 -3.438,2.98 -3.086,2.789 C -2.293,2.348 -1.126,2.039 0,1.937 L 0,0 Z" />
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
