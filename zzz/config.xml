@@ -5,7 +5,7 @@
     </author>
     <content src="tehranlux.html" />
     <access origin="*" />
-    <icon src="assets/img/logo.svg" />
+    <icon src="assets/img/tehranlux_logo.png" />
     <access origin="https://tehranlux.com"  subdomains="true"/>
 	<preference name="permissions" value="none"/>
 	<feature name="http://api.phonegap.com/1.0/network"/>
