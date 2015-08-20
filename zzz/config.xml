@@ -3,7 +3,7 @@
     <author email="dev@callback.apache.org" href="https://tehranlux.com">
         Tehranlux Team
     </author>
-    <content src="tehranlux.html" />
+    <content src="index.html" />
     <access origin="*" />
     <icon src="assets/img/tehranlux_logo.png" />
     <access origin="https://tehranlux.com"  subdomains="true"/>
