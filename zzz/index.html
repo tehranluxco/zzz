@@ -22,8 +22,6 @@
 
     <script src="https://maps.googleapis.com/maps/api/js?v=3&sensor=false"></script>
 
-    <!--MD5-->
-    <script src="assets/js/md5.min.js"></script>
 
     <!--checkforlogin method-->
     <script>
@@ -470,7 +468,6 @@
             } else if(password.localeCompare("") == 0){
                 console.log("empty password");
             }else{
-                password = md5(password);
                 var post_item = {username:username,password:password,login:"login"};
                 console.log(post_item);
                 readJSON("https://tehranlux.com/appLogin",post_item,rightConnectLogin,errorConnectLogin);

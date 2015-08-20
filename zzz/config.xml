@@ -9,6 +9,7 @@
     <access origin="https://tehranlux.com"  subdomains="true"/>
 	<preference name="permissions" value="none"/>
 	<feature name="http://api.phonegap.com/1.0/network"/>
+	<gap:splash src="splash.png" />
 	
 	<!--<gap:splash src="assets/img/logo.svg" />-->
 	<!--<gap:plugin name="nl.x-services.plugins.toast" />-->
